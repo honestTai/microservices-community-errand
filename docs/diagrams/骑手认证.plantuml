@@ -1,0 +1,23 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 提交认证信息请求
+activate App
+App -> Server: 提交认证信息请求
+activate Server
+Server -> Server: 检查是否已存在认证信息
+Server -> MySQL: 查询用户的认证信息
+activate MySQL
+MySQL --> Server: 返回用户的认证信息
+deactivate MySQL
+alt 用户没有认证信息
+    Server -> Server: 插入新的认证信息到数据库
+    Server --> App: 返回认证成功消息
+else 用户已存在认证信息
+    Server --> App: 返回已存在认证信息错误消息
+end
+deactivate Server
+deactivate App
+@enduml

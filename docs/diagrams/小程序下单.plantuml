@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 发起下单请求
+activate App
+App -> Server: 发起下单请求
+activate Server
+Server -> Server: 获取当前用户信息
+Server -> Server: 检查用户余额是否足够支付订单
+alt 余额充足
+    Server -> Server: 扣除用户账户余额
+    Server -> Server: 更新用户账户信息
+    Server -> Server: 生成唯一订单编号
+    Server -> Server: 插入订单信息到数据库
+    Server -> Server: 记录收支明细
+    Server --> App: 返回下单成功消息
+else 余额不足
+    Server --> App: 返回余额不足错误消息
+end
+deactivate Server
+deactivate App
+@enduml

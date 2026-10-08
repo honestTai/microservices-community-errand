@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 发起注册请求
+activate App
+App -> Server: 发起注册请求
+activate Server
+Server -> Server: 参数验证
+alt 参数完整
+    Server -> Server: 根据角色判断
+    alt 普通用户注册
+        Server -> Server: 执行注册操作
+        Server -> Server: 将账户信息存入数据库
+        Server --> App: 返回注册成功
+    else 角色错误
+        Server --> App: 返回角色错误
+    end
+    deactivate Server
+    deactivate App
+else 参数不完整
+    Server --> App: 返回参数缺失错误
+    deactivate Server
+    deactivate App
+end
+@enduml

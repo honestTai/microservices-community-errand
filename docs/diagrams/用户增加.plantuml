@@ -1,0 +1,15 @@
+@startuml
+actor "后台用户" as PC
+participant "Spring Boot服务端" as Server
+database MySQL
+activate Server
+PC -> Server: 提交新增用户请求
+Server -> Server: 查询是否存在相同用户名的用户
+Server -> Server: 插入新用户到数据库
+alt 用户名重复
+    Server --> PC: 返回用户已存在错误消息
+else 用户名不重复
+    Server --> PC: 返回新增用户成功消息
+end
+deactivate Server
+@enduml

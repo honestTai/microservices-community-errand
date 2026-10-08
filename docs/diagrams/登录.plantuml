@@ -1,0 +1,32 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "PC管理端" as PC
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 发起登录请求
+activate App
+App -> Server: 发起登录请求
+activate Server
+Server -> Server: 参数验证
+alt 参数完整
+    Server -> MySQL: 查询用户信息
+    activate MySQL
+    MySQL --> Server: 返回用户信息
+    deactivate MySQL
+    Server -> Server: 根据角色判断
+    alt 管理员登录
+        Server -> Server: 管理员登录操作
+    else 普通用户登录
+        Server -> Server: 普通用户登录操作
+    end
+    Server -> Server: 生成Token
+    Server --> App: 返回登录结果
+    deactivate Server
+    deactivate App
+else 参数不完整
+    Server --> App: 返回参数缺失错误
+    deactivate Server
+    deactivate App
+end
+@enduml

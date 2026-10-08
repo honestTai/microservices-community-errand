@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 请求接单
+activate App
+App -> Server: 请求接单
+activate Server
+Server -> Server: 获取当前骑手用户信息
+Server -> Server: 更新订单信息
+alt 订单状态为"待送达"
+    Server -> Server: 骑手送达订单
+    Server -> Server: 更新骑手账户余额
+    Server -> Server: 记录收支明细
+    Server --> App: 返回接单成功消息
+else 订单状态为"已取消"
+    Server -> Server: 记录订单取消信息
+    Server -> Server: 记录收支明细
+    Server --> App: 返回订单已取消消息
+end
+deactivate Server
+deactivate App
+@enduml

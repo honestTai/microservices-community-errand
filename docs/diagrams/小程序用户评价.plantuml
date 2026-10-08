@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant "微信小程序端" as App
+participant "Spring Boot服务端" as Server
+database MySQL
+User -> App: 提交评论请求
+activate App
+App -> Server: 提交评论请求
+activate Server
+Server -> Server: 设置当前时间
+Server -> Server: 插入评论到数据库
+Server -> Server: 获取订单信息
+Server -> Server: 更新订单状态为已完成
+alt 更新成功
+    Server -> Server: 获取用户评论信息
+    Server -> Server: 获取骑手评论信息
+    Server -> Server: 更新缓存信息
+    Server --> App: 返回评论成功消息
+else 更新失败
+    Server --> App: 返回评论失败消息
+end
+deactivate Server
+deactivate App
+@enduml

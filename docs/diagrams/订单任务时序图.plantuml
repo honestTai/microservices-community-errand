@@ -1,0 +1,20 @@
+@startuml
+participant "Spring Boot服务端" as Server
+database MySQL
+activate Server
+Server -> Server: 订单扫描任务开始
+Server -> Server: 查询所有待接单订单
+Server -> Server: 遍历订单列表
+loop 订单列表
+    Server -> Server: 计算订单时间与当前时间的差值
+    alt 订单超时
+        Server -> Server: 取消订单
+        Server -> Server: 归还用户金额
+        Server -> Server: 记录收支明细
+    else 订单未超时
+        Server -> Server: 继续扫描下一个订单
+    end
+end
+deactivate Server
+Server -> Server: 订单扫描任务结束
+@enduml
